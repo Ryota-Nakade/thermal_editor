@@ -23,7 +23,7 @@ class ImageConverter{
                 image_sub = it.subscribe("/thermal_image", 1, &ImageConverter::imageCb, this);//Publisherを定義．topic名は/image_raw2
                 image_pub = it.advertise("/image_edit", 1);    //Subscriverを定義．
                 //topic名は/image_raw，第2引数はキューサイズ，第3引数はトピックを受信したときに呼び出すCallback関数の指定
-                cv::namedWindow("src", CV_WINDOW_NORMAL);
+                cv::namedWindow("src", CV_WINDOW_NORMAL);//ウィンドウをリサイズ可能に設定
                 cv::resizeWindow("src", 640, 480);//ウィンドウサイズのリサイズ
             }
 
@@ -48,17 +48,17 @@ class ImageConverter{
             
             cv::Mat dst = src->image;
             // cv::Mat dst2;
-            // dst.convertTo(dst2, CV_8U, 255.0/(maxT-minT));
-            // dst.convertTo(dst2, CV_32FC1);
-            // cv::normalize(dst2, dst2, 0, 1, cv::NORM_MINMAX);
-            cv::Mat dst2 = src->image;
-            cv::normalize(dst2, dst2, 0, 255, cv::NORM_MINMAX);
-            dst.convertTo(dst2, CV_8UC1);
-            
-            double minT2, maxT2;
-            cv::minMaxLoc(dst2, &minT2, &maxT2, NULL, NULL);
 
-            // std::cout << "特徴点数:" << descriptor1.rows << " / 次元数:" << descriptor1.cols << std::endl;
+            // dst.convertTo(dst2, CV_32FC1);//32bit浮動小数点に変換
+            // cv::normalize(dst2, dst2, 0, 1, cv::NORM_MINMAX);//0~1に正規化
+            cv::Mat dst2 = src->image;
+            cv::normalize(dst2, dst2, 0, 255, cv::NORM_MINMAX);//次のステップで8bit画像にするため，0~255に正規化．
+            dst.convertTo(dst2, CV_8UC1);//8bitにconvert
+            
+            double minT2, maxT2;//最大・最小輝度の格納用
+            cv::minMaxLoc(dst2, &minT2, &maxT2, NULL, NULL);//8bit画像の最大値と最小値を得る
+
+            //画像のデータを得る
             std::cout << "Min: " << minT << " //Max: " << maxT << std::endl;
             std::cout << "dims: " << dst.dims << " / depth: " << dst.depth() << " / size: " << dst.size().width 
              << " x " << dst.size().height << " / channel: " << dst.channels() << " / type " << dst.type() << std::endl;
@@ -71,7 +71,7 @@ class ImageConverter{
 
             image_pub.publish(src->toImageMsg());//cv::Mat型からImageConstPtr型へtoImageMsg()で変換してpublish
             
-            cv::imshow("src", dst2);
+            cv::imshow("src", dst2);//8bit画像グレースケールを表示
             cv::waitKey(1);
         }
 };
