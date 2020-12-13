@@ -21,8 +21,8 @@ class ImageConverter{
         //コンストラクタ
         ImageConverter()
             : it(nh){
-                image_sub = it.subscribe("/thermal_image", 1, &ImageConverter::imageCb, this);//Publisherを定義．topic名は/thermal_image
-                image_pub = it.advertise("/image_edit", 1);    //Subscriverを定義．
+                image_sub = it.subscribe("/thermal_image_edit", 1, &ImageConverter::imageCb, this);//Subscriberを定義．topic名は/thermal_image
+                image_pub = it.advertise("/thermal_image_feature", 1);    //Publisherを定義．
                 //topic名は/image_raw，第2引数はキューサイズ，第3引数はトピックを受信したときに呼び出すCallback関数の指定
                 cv::namedWindow("ORB", CV_WINDOW_NORMAL);
                 cv::resizeWindow("ORB", 640, 480);//ウィンドウサイズのリサイズ
@@ -80,7 +80,8 @@ class ImageConverter{
             cv::imshow("ORB", src->image);//ORB特徴点検出結果を表示
 
             std::cout << "特徴点数:" << descriptor1.rows << " / 次元数:" << descriptor1.cols << std::endl;
-            image_pub.publish(src->toImageMsg());//cv::Mat型からImageConstPtr型へtoImageMsg()で変換してpublish
+            sensor_msgs::ImagePtr mess = cv_bridge::CvImage(std_msgs::Header(), "mono8", src->image).toImageMsg();//Mat型からsensor_msgs/ImagePtr型へ変換．モノクロ画像なので，encodingはmono8にしてある．
+            image_pub.publish(mess);//msgをpublish
 
             cv::waitKey(1);
         }

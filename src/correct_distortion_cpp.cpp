@@ -95,8 +95,9 @@ int main(int argc, char *argv[])
     // init subscribers and publishers
     ros::NodeHandle n;
     image_transport::ImageTransport it(n_);
-    ros::Subscriber subThermal = n.subscribe("/thermal_image", 1, onDataReceive);
-    image_transport::Publisher pubt = it.advertise("thermal_corrected", 1);
+    ros::Subscriber subThermal = n.subscribe("/thermal_image_edit", 1, onDataReceive);
+    // image_transport::Publisher pubt = it.advertise("thermal_corrected", 1);
+    image_transport::Publisher pubt = it.advertise("/camera/image_raw", 1);
     _pub = &pubt;
 
     // specify loop rate: a meaningful value according to your publisher configuration
