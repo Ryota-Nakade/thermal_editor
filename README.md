@@ -2,9 +2,11 @@
 ROS drivers for thermal image editing from optris camera
 
 thermal camera : optris piseries PI640
+
 ros topic      : /thermal_image from optris_drivers(http://wiki.ros.org/optris_drivers)
 
 file description
+
 /src
     /correct_distortion_cpp.cpp
         PI640の画像の歪み補正をするノード
