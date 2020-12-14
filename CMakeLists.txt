@@ -31,7 +31,8 @@ include_directories(
 
 add_executable(thermal_imager src/thermal_imager.cpp)
 add_executable(feature_imager src/feature_imager.cpp)
-add_executable(maxinvest src/maxinvest.cpp)
+add_executable(thermal_image_divider src/thermal_image_divider.cpp)
+add_executable(thermal_feature_extractor src/thermal_feature_extractor.cpp)
 add_executable(usb_pub src/usb_pub.cpp)
 add_executable(optris_correct_distortion src/correct_distortion_cpp.cpp)
 
@@ -45,7 +46,12 @@ target_link_libraries(feature_imager
   ${OpenCV_LIBRARIES}
 )
 
-target_link_libraries(maxinvest
+target_link_libraries(thermal_image_divider
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
+
+target_link_libraries(thermal_feature_extractor
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )
