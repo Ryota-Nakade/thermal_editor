@@ -80,9 +80,9 @@ class ImageConverter{
             cv::Mat dst_mask2 = cv::Mat::zeros(dst.rows, dst.cols, CV_16UC1);//マスクした16bit出力画像用            
             cv::Mat dst_mask3 = cv::Mat::zeros(dst.rows, dst.cols, CV_16UC1);//マスクした16bit出力画像用
             // cv::Mat dst_mask_8 = cv::Mat::zeros(dst.rows, dst.cols, CV_16UC1);//マスクした8bit出力画像用
-            rangeThermalImage(dst, 600, 800, dst_mask);//指定した範囲内の画素からなる画像"dst_mask"を生成．
-            rangeThermalImage(dst, 800, 1000, dst_mask2);//指定した範囲内の画素からなる画像"dst_mask"を生成．
-            rangeThermalImage(dst, 1000, 1300, dst_mask3);//指定した範囲内の画素からなる画像"dst_mask"を生成．
+            rangeThermalImage(dst, 1000,1075, dst_mask);//指定した範囲内の画素からなる画像"dst_mask"を生成．
+            rangeThermalImage(dst, 1075, 1150, dst_mask2);//指定した範囲内の画素からなる画像"dst_mask"を生成．
+            rangeThermalImage(dst, 1150, 1225, dst_mask3);//指定した範囲内の画素からなる画像"dst_mask"を生成．
             // cv::normalize(dst_mask, dst_mask_8, 0, 255, cv::NORM_MINMAX);//次のステップで8bit画像にするため，0~255に正規化．
             // dst_mask_8.convertTo(dst_mask_8, CV_8UC1);//8bitにconvert
             //以上　特定の輝度の範囲のみ抽出ーーーーーーーーーー
