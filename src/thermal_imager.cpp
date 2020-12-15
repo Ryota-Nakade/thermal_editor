@@ -106,7 +106,7 @@ class ImageConverter{
             cv::imshow("ORB", dst_color);//ORB特徴点検出結果を表示
 
             std::cout << "特徴点数:" << descriptor1.rows << std::endl; 
-            // std::cout << " / 次元数:" << descriptor1.cols << std::endl;
+            std::cout << " / 次元数:" << descriptor1.cols << " / row :" << descriptor1.rows << std::endl;
             sensor_msgs::ImagePtr mess = cv_bridge::CvImage(std_msgs::Header(), "mono8", src->image).toImageMsg();//Mat型からsensor_msgs/ImagePtr型へ変換．モノクロ画像なので，encodingはmono8にしてある．
             image_pub.publish(mess);//msgをpublish
 

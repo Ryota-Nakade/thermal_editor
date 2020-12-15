@@ -29,27 +29,30 @@ void orbDtec(cv::Mat &src1, cv::Mat &src2, cv::Mat &src3, cv::Mat &dst) {
     feature->detectAndCompute(src2, cv::noArray(), keypoint2, descriptor2);
     feature->detectAndCompute(src3, cv::noArray(), keypoint3, descriptor3);
 
+    //特徴点の配列の合成．keypoint1,2,3をくっつける
+    std::vector<cv::KeyPoint> keypoint_marge;//合成後の配列の宣言
+    keypoint_marge.reserve( keypoint1.size() + keypoint2.size() + keypoint3.size() );//メモリの確保
+    keypoint_marge.insert( keypoint_marge.end(), keypoint1.begin(), keypoint1.end() );//keypoint_margeの最後尾にkeypoint1をくっつける
+    keypoint_marge.insert( keypoint_marge.end(), keypoint2.begin(), keypoint2.end() );//keypoint_margeの最後尾にkeypoint2をくっつける
+    keypoint_marge.insert( keypoint_marge.end(), keypoint3.begin(), keypoint3.end() );//keypoint_margeの最後尾にkeypoint3をくっつける
+
+    // //記述子の配列の合成．descriptor1,2,3をくっつける
+    // cv::Mat descriptor_marge;//合成後の配列の宣言
+    // descriptor_marge.reserve( descriptor1.size() + descriptor2.size() + descriptor3.size() );//メモリの確保
+    // descriptor_marge.insert( descriptor_marge.end(), descriptor1.begin(), descriptor1.end() );//descriptor_margeの最後尾にkeypoint1をくっつける
+    // descriptor_marge.insert( descriptor_marge.end(), descriptor2.begin(), descriptor2.end() );//descriptor_margeの最後尾にkeypoint2をくっつける
+    // descriptor_marge.insert( descriptor_marge.end(), descriptor3.begin(), descriptor3.end() );//descriptor_margeの最後尾にkeypoint3をくっつける
+    // std::cout << "記述子：" << descriptor_marge.cols << std::endl;
+
     //特徴点表示のときの四角の大きさ．中心からこの座標値離れた位置に四角の頂点が来る
     cv::Point2f rec {5.0, 5.0};
 
-    for (double i = 0; i < keypoint1.size(); i++) {
-        cv::KeyPoint *point = &(keypoint1[i]);
-        cv::circle(src, point->pt, 6, cv::Scalar(0,255,255), 1);//円で表示
-        // cv::rectangle(src, point->pt - rec, point->pt + rec, cv::Scalar(0, 255, 255), 1);//四角で表示
+    for (double i = 0; i < keypoint_marge.size(); i++) {
+        cv::KeyPoint *point = &(keypoint_marge[i]);
+        cv::circle(src, point->pt, 6, cv::Scalar(0,255,255), 1);//特徴点を円で表示
+        // cv::rectangle(src, point->pt - rec, point->pt + rec, cv::Scalar(0, 255, 255), 1);//特徴点を四角で表示
     }
-    for (double i = 0; i < keypoint2.size(); i++) {
-        cv::KeyPoint *point = &(keypoint2[i]);
-        cv::circle(src, point->pt, 6, cv::Scalar(0,255,255), 1);//円で表示
-        // cv::rectangle(src, point->pt - rec, point->pt + rec, cv::Scalar(0, 255, 255), 1);//四角で表示
-    }
-    for (double i = 0; i < keypoint3.size(); i++) {
-        cv::KeyPoint *point = &(keypoint3[i]);
-        cv::circle(src, point->pt, 6, cv::Scalar(0,255,255), 1);//円で表示
-        // cv::rectangle(src, point->pt - rec, point->pt + rec, cv::Scalar(0, 255, 255), 1);//四角で表示
-    }
-    dst = src.clone();
-    int keysize = keypoint1.size() + keypoint2.size() + keypoint3.size();
-    std::cout << "特徴点数：" << keysize << std::endl;
+    dst = src.clone();    
 }
 
 void featureExtraction( const sensor_msgs::ImageConstPtr &msg1, const  sensor_msgs::ImageConstPtr &msg2, const  sensor_msgs::ImageConstPtr &msg3) {
