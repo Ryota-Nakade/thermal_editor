@@ -84,7 +84,7 @@ class ImageConverter{
             //ORB抽出器
             std::vector<cv::KeyPoint> keypoint1;//特徴点を格納する領域を用意
             cv::Mat descriptor1;//特徴記述子を格納する領域
-            cv::Ptr<cv::ORB> feature = cv::ORB::create(2000, 1.2f, 8, 31, 0, 2, cv::ORB::HARRIS_SCORE, 31, 20);//ORBオブジェクト生成．第1引数は抽出する特徴点の上限
+            cv::Ptr<cv::ORB> feature = cv::ORB::create(500, 1.2f, 8, 31, 0, 2, cv::ORB::HARRIS_SCORE, 31, 20);//ORBオブジェクト生成．第1引数は抽出する特徴点の上限
             // feature->detectAndCompute(dst, cv::noArray(), keypoint1, descriptor1);
             feature->detectAndCompute(dst, cv::noArray(), keypoint1, descriptor1);
 

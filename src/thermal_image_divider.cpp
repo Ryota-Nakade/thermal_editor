@@ -71,18 +71,17 @@ class ImageConverter{
             cv::Mat dst = (src->image).clone();
             double minT, maxT;//元画像の最大値と最小値の格納用変数
             cv::minMaxLoc(dst, &minT, &maxT, NULL, NULL);//元画像の最大値と最小値のポインタを得る
-            std::cout << "Min: " << minT << " //Max: " << maxT << std::endl;
-            minT = (double)(minT - 1000.0)/10.0;//画素値から摂氏温度に変換
-            maxT = (double)(maxT - 1000.0)/10.0;//画素値から摂氏温度に変換
-
+            
             //特定の輝度の範囲のみマスクして抽出ーーーーーーー
             cv::Mat dst_mask = cv::Mat::zeros(dst.rows, dst.cols, CV_16UC1);//マスクした16bit出力画像用
             cv::Mat dst_mask2 = cv::Mat::zeros(dst.rows, dst.cols, CV_16UC1);//マスクした16bit出力画像用            
             cv::Mat dst_mask3 = cv::Mat::zeros(dst.rows, dst.cols, CV_16UC1);//マスクした16bit出力画像用
             // cv::Mat dst_mask_8 = cv::Mat::zeros(dst.rows, dst.cols, CV_16UC1);//マスクした8bit出力画像用
-            rangeThermalImage(dst, 1000,1075, dst_mask);//指定した範囲内の画素からなる画像"dst_mask"を生成．
-            rangeThermalImage(dst, 1075, 1150, dst_mask2);//指定した範囲内の画素からなる画像"dst_mask"を生成．
-            rangeThermalImage(dst, 1150, 1225, dst_mask3);//指定した範囲内の画素からなる画像"dst_mask"を生成．
+            ushort thLow = 1200;//表示する下限値
+            ushort range = 48;//温度の範囲．192が最大(8bitで表示可能な最大値)
+            rangeThermalImage(dst, thLow, thLow+range, dst_mask);//指定した範囲内の画素からなる画像"dst_mask"を生成．
+            rangeThermalImage(dst, thLow+range, thLow+2*range, dst_mask2);//指定した範囲内の画素からなる画像"dst_mask"を生成．
+            rangeThermalImage(dst, thLow+2*range, thLow+3*range, dst_mask3);//指定した範囲内の画素からなる画像"dst_mask"を生成．
             // cv::normalize(dst_mask, dst_mask_8, 0, 255, cv::NORM_MINMAX);//次のステップで8bit画像にするため，0~255に正規化．
             // dst_mask_8.convertTo(dst_mask_8, CV_8UC1);//8bitにconvert
             //以上　特定の輝度の範囲のみ抽出ーーーーーーーーーー
@@ -129,6 +128,10 @@ class ImageConverter{
             // //以上　ヒストグラム関係ーーーーーーーーーーーーー
 
             //元画像のデータを表示ーーーーーーーーーーーーーー
+            std::cout << "Min: " << minT << " //Max: " << maxT << std::endl;
+            minT = (double)(minT - 1000.0)/10.0;//画素値から摂氏温度に変換
+            maxT = (double)(maxT - 1000.0)/10.0;//画素値から摂氏温度に変換
+
             std::cout << "Min Temperature: " << minT << " //Max Temperature: " << maxT << std::endl;
             std::cout << "dims: " << dst.dims << " / depth: " << dst.depth() << " / size: " << dst.size().width 
              << " x " << dst.size().height << " / channel: " << dst.channels() << " / type: " << dst.type() << std::endl;

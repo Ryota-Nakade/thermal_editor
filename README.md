@@ -8,6 +8,7 @@ ros topic      : /thermal_image from optris_drivers(http://wiki.ros.org/optris_d
 file description
 
 /src
+
     /correct_distortion_cpp.cpp
         PI640の画像の歪み補正をするノード
 

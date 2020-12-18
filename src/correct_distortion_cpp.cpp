@@ -33,35 +33,27 @@ cv::Mat input8(480, 640, CV_8UC1);
 cv::Mat img(height, width, CV_8UC1);
 uint cnt = 0;
 
-void onDataReceive(const sensor_msgs::ImageConstPtr& msg)
-{
-    try
-    {
+void onDataReceive(const sensor_msgs::ImageConstPtr& msg)　{
+    try {
         cv::Mat input = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::MONO16)->image;
         int maxVal = 0;
         int minVal = 66000;
-        for (int i = 0; i < input.rows; i++)
-        {
-            for (int j = 0; j < input.cols; j++)
-            {
+        for (int i = 0; i < input.rows; i++)　{//画像の最大値と最小値を求める
+            for (int j = 0; j < input.cols; j++) {
                 int val = input.at<ushort>(i, j);
                 maxVal = max(maxVal, val);
                 minVal = min(minVal, val);
             }
         }
-        for (int i = 0; i < input.rows; i++)
-        {
-            for (int j = 0; j < input.cols; j++)
-            {
-                input8.at<uchar>(i, j) = 255 * (input.at<ushort>(i, j) - minVal + 1) / (maxVal - minVal);
+        for (int i = 0; i < input.rows; i++) {
+            for (int j = 0; j < input.cols; j++) {
+                input8.at<uchar>(i, j) = 255 * (input.at<ushort>(i, j) - minVal + 1) / (maxVal - minVal);//16bitから8bitに正規化
             }
         }
 
-        for (int i = 0; i < img.rows; i++)
-        {
+        for (int i = 0; i < img.rows; i++) {
             uchar *out = img.ptr<uchar>(i);
-            for (int j = 0; j < img.cols; j++)
-            {
+            for (int j = 0; j < img.cols; j++) {
                 double x1 = j - img.cols / 2;
                 double y1 = (img.rows / 2 - i) * alpha;
                 double r_2 = x1 * x1 + y1 * y1;
@@ -70,40 +62,36 @@ void onDataReceive(const sensor_msgs::ImageConstPtr& msg)
                 double y2 = y1 * (1 + k1 * r_2 + k2 * r_4) / (1 + k3 * r_2 + k4 * r_4);
                 int ii = input.rows / 2 - (int)round(y2);
                 int jj = input.cols / 2 + (int)round(x2);
-                if (0 <= ii && ii < input.rows && 0 <= jj && jj < input.cols)
-                {
+                if (0 <= ii && ii < input.rows && 0 <= jj && jj < input.cols) {
                     uchar val = (uchar)((input.at<ushort>(ii, jj) - minVal) * 255 / (maxVal - minVal));
                     out[j] = val;
                 }
             }
         }
 
-		_pub->publish(cv_bridge::CvImage(std_msgs::Header(), sensor_msgs::image_encodings::MONO8, img).toImageMsg());
+		_pub->publish(cv_bridge::CvImage(std_msgs::Header(), sensor_msgs::image_encodings::MONO8, img).toImageMsg());//Mat型からMsg型に変換してPublish
     }
-    catch (cv_bridge::Exception &e)
-    {
+    catch (cv_bridge::Exception &e) {//エラー処理
         ROS_ERROR("cv_beidge exception: %s", e.what());
     }
 }
 
-int main(int argc, char *argv[])
-{
-    ros::init(argc, argv, "optris_correct_distortion");
+int main(int argc, char *argv[])　{
+    ros::init(argc, argv, "optris_correct_distortion");//初期化して，ノード名の宣言とか・・・
 
     ros::NodeHandle n_("~");
 
     // init subscribers and publishers
     ros::NodeHandle n;
     image_transport::ImageTransport it(n_);
-    ros::Subscriber subThermal = n.subscribe("/thermal_image_edit", 1, onDataReceive);
+    ros::Subscriber subThermal = n.subscribe("/thermal_image_edit", 1, onDataReceive);//Subscriberの宣言
     // image_transport::Publisher pubt = it.advertise("thermal_corrected", 1);
-    image_transport::Publisher pubt = it.advertise("/camera/image_raw", 1);
+    image_transport::Publisher pubt = it.advertise("/camera/image_raw", 1);//Publisherの宣言
     _pub = &pubt;
 
     // specify loop rate: a meaningful value according to your publisher configuration
     ros::Rate loop_rate(30);
-    while (ros::ok())
-    {
+    while (ros::ok()) {
         ros::spinOnce();
         loop_rate.sleep();
     }
