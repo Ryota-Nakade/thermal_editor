@@ -45,7 +45,7 @@ class ImageConverter{
                 ROS_ERROR("cv_bridge exception: %s", e.what());
             }
 
-            cv::Mat dst = src->image;
+            cv::Mat dst = (src->image).clone();
             double minT, maxT;//元画像の最大値と最小値の格納用変数
             // cv::minMaxLoc(dst, &minT, &maxT, NULL, NULL);//元画像の最大値と最小値のポインタを得る
             cv::minMaxLoc(dst, &minT, &maxT, NULL, NULL);//元画像の最大値と最小値のポインタを得る

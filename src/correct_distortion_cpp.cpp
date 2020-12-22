@@ -3,7 +3,7 @@
 //　PI450では歪係数が異なるので，これは使えない
 
 #include <math.h>
-#include "ros/ros.h"
+#include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
@@ -33,12 +33,12 @@ cv::Mat input8(480, 640, CV_8UC1);
 cv::Mat img(height, width, CV_8UC1);
 uint cnt = 0;
 
-void onDataReceive(const sensor_msgs::ImageConstPtr& msg)　{
+void onDataReceive(const sensor_msgs::ImageConstPtr& msg) {
     try {
         cv::Mat input = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::MONO16)->image;
         int maxVal = 0;
         int minVal = 66000;
-        for (int i = 0; i < input.rows; i++)　{//画像の最大値と最小値を求める
+        for (int i = 0; i < input.rows; i++) {//画像の最大値と最小値を求める
             for (int j = 0; j < input.cols; j++) {
                 int val = input.at<ushort>(i, j);
                 maxVal = max(maxVal, val);
@@ -76,7 +76,7 @@ void onDataReceive(const sensor_msgs::ImageConstPtr& msg)　{
     }
 }
 
-int main(int argc, char *argv[])　{
+int main(int argc, char *argv[]) {
     ros::init(argc, argv, "optris_correct_distortion");//初期化して，ノード名の宣言とか・・・
 
     ros::NodeHandle n_("~");
@@ -84,9 +84,9 @@ int main(int argc, char *argv[])　{
     // init subscribers and publishers
     ros::NodeHandle n;
     image_transport::ImageTransport it(n_);
-    ros::Subscriber subThermal = n.subscribe("/thermal_image_edit", 1, onDataReceive);//Subscriberの宣言
+    ros::Subscriber subThermal = n.subscribe("/thermal_image", 1, onDataReceive);//Subscriberの宣言
     // image_transport::Publisher pubt = it.advertise("thermal_corrected", 1);
-    image_transport::Publisher pubt = it.advertise("/camera/image_raw", 1);//Publisherの宣言
+    image_transport::Publisher pubt = it.advertise("thermal_optris_correct", 1);//Publisherの宣言
     _pub = &pubt;
 
     // specify loop rate: a meaningful value according to your publisher configuration

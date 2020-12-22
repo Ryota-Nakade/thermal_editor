@@ -37,6 +37,7 @@ add_executable(usb_pub src/usb_pub.cpp)
 add_executable(thermal_photo src/thermal_photo.cpp)
 add_executable(optris_correct_distortion src/correct_distortion_cpp.cpp)
 add_executable(thermal_threshold src/thermal_threshold.cpp)
+add_executable(thermal_distortion src/thermal_distortion.cpp)
 
 target_link_libraries(thermal_imager
   ${catkin_LIBRARIES}
@@ -75,6 +76,11 @@ target_link_libraries(optris_correct_distortion
 )
 
 target_link_libraries(thermal_threshold
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
+
+target_link_libraries(thermal_distortion
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )
