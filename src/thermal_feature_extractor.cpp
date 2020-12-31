@@ -92,8 +92,8 @@ int main(int argc, char** argv) {
     // image_transport::SubscriberFilter image_sub4(it, "/thermal_image", 1);
     // image_transport::Publisher image_pub1 = it.advertise("/thermal_image_canny1", 1);
     // image_transport::Publisher image_pub2 = it.advertise("/thermal_image_canny2", 1);
-    message_filters::TimeSynchronizer<sensor_msgs::Image, sensor_msgs::Image, sensor_msgs::Image> sync(image_sub1, image_sub2, image_sub3, 10);
-    sync.registerCallback(boost::bind(&featureExtraction, _1, _2, _3));
+    message_filters::TimeSynchronizer<sensor_msgs::Image, sensor_msgs::Image, sensor_msgs::Image> sync(image_sub1, image_sub2, image_sub3, 10);// 3つのトピックを同時にSubscribeする．タイムスタンプが同じでないといけない．
+    sync.registerCallback(boost::bind(&featureExtraction, _1, _2, _3));// 3つのトピックを同時にcallback関数に渡す
     // image_pub1.publish(mess1);//msgをpublish
     // image_pub2.publish(mess2);//msgをpublish
 
