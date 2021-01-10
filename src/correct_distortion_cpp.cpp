@@ -36,6 +36,8 @@ uint cnt = 0;
 void onDataReceive(const sensor_msgs::ImageConstPtr& msg) {
     try {
         cv::Mat input = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::MONO16)->image;
+        std::cout << "dims: " << input.dims << " / depth: " << input.depth() << " / size: " << input.size().width 
+         << " x " << input.size().height << " / channel: " << input.channels() << " / type " << input.type() << std::endl;
         int maxVal = 0;
         int minVal = 66000;
         for (int i = 0; i < input.rows; i++) {//画像の最大値と最小値を求める
@@ -70,6 +72,10 @@ void onDataReceive(const sensor_msgs::ImageConstPtr& msg) {
         }
 
 		_pub->publish(cv_bridge::CvImage(std_msgs::Header(), sensor_msgs::image_encodings::MONO8, img).toImageMsg());//Mat型からMsg型に変換してPublish
+
+        //元画像のデータを表示
+        std::cout << "dims: " << img.dims << " / depth: " << img.depth() << " / size: " << img.size().width 
+         << " x " << img.size().height << " / channel: " << img.channels() << " / type " << img.type() << std::endl;
     }
     catch (cv_bridge::Exception &e) {//エラー処理
         ROS_ERROR("cv_beidge exception: %s", e.what());
