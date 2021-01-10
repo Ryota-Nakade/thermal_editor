@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="use_compressed" default="true" />
+    
+    <group if="$(arg use_compressed)">
+        <node name="image_republish" pkg="image_transport" type="republish" args="compressed raw">
+            <remap from="in" to="/thermal/image_raw" />
+            <remap from="out" to="/theraml/image_raw/compressed" />
+        </node>
+        <node name="thermal" pkg="optris_drivers" type="optris_imager_node" args="_xmlConfig:=/home/robotics/catkin_ws/src/optris_drivers/config/17102092.xml"/>
+    </group>
+
+    <group unless="$(arg use_compressed)">
+        <node name="thermal" pkg="optris_drivers" type="optris_imager_node" args="_xmlConfig:=/home/robotics/catkin_ws/src/optris_drivers/config/17102092.xml"/>
+    </group>
+
+</launch>
