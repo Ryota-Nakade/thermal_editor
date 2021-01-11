@@ -28,10 +28,12 @@ double alpha = 9.88930697e-01;
 
 int width = 938;
 int height = 606;
+// int width = 640;
+// int height = 480;
 
-cv::Mat input8(480, 640, CV_8UC1);
+// cv::Mat input8(480, 640, CV_8UC1);
 cv::Mat img(height, width, CV_8UC1);
-uint cnt = 0;
+// uint cnt = 0;
 
 void onDataReceive(const sensor_msgs::ImageConstPtr& msg) {
     try {
@@ -47,11 +49,11 @@ void onDataReceive(const sensor_msgs::ImageConstPtr& msg) {
                 minVal = min(minVal, val);
             }
         }
-        for (int i = 0; i < input.rows; i++) {
-            for (int j = 0; j < input.cols; j++) {
-                input8.at<uchar>(i, j) = 255 * (input.at<ushort>(i, j) - minVal + 1) / (maxVal - minVal);//16bitから8bitに正規化
-            }
-        }
+        // for (int i = 0; i < input.rows; i++) {
+        //     for (int j = 0; j < input.cols; j++) {
+        //         input8.at<uchar>(i, j) = 255 * (input.at<ushort>(i, j) - minVal + 1) / (maxVal - minVal);//16bitから8bitに正規化
+        //     }
+        // }
 
         for (int i = 0; i < img.rows; i++) {
             uchar *out = img.ptr<uchar>(i);
