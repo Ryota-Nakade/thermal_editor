@@ -35,7 +35,7 @@ double k3 = 1.65216912e-05;
             image_sub = it.subscribe("/thermal_image", 1, &DistortionCorrect::DistortionCo, this);//Subscriberの定義
             image_pub = it.advertise("thermal_image_corrected", 1);//Publisherの定義
 
-            cv::initUndistortRectifyMap(camMat, distCoef, cv::noArray(), cv::noArray(), cv::Size(640, 480), CV_16SC2, map1, map2);//歪み補正マップの算出．cv::remap()とペアで使用．PI450はcv::Sizeを(382,288)に，PI640は(640,480)に変えること
+            cv::initUndistortRectifyMap(camMat, distCoef, cv::noArray(), cv::noArray(), cv::Size(860, 530), CV_16SC2, map1, map2);//歪み補正マップの算出．cv::remap()とペアで使用．PI450はcv::Sizeを(382,288)に，PI640は(640,480)に変えること
         }
     ~DistortionCorrect() {//デストラクタ
     }

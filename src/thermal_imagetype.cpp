@@ -33,24 +33,24 @@ class ImageType{
         void imageType(const sensor_msgs::ImageConstPtr &msg) {
             cv_bridge::CvImagePtr src;
             try {
-                src = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::MONO16);//sensor_msgs::ImageConstPtr型から16bitのcv::Mat型に変換
+                src = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::MONO8);//sensor_msgs::ImageConstPtr型から16bitのcv::Mat型に変換
             }
             catch (cv_bridge::Exception &e) {
                 ROS_ERROR("cv_bridge exception: %s", e.what());
             }
 
             cv::Mat dst = (src->image).clone();
-            double minT, maxT;//元画像の最大値と最小値の格納用変数
-            cv::minMaxLoc(dst, &minT, &maxT, NULL, NULL);//元画像の最大値と最小値のポインタを得る
+            double minT, maxT, minRaw, maxRaw;//元画像の最大値と最小値の格納用変数
+            cv::minMaxLoc(dst, &minRaw, &maxRaw, NULL, NULL);//元画像の最大値と最小値のポインタを得る
 
-            std::cout << "Min: " << minT << " //Max: " << maxT << std::endl;
-            minT = (double)(minT - 1000.0)/10.0;//画素値から摂氏温度に変換
-            maxT = (double)(maxT - 1000.0)/10.0;//画素値から摂氏温度に変換
+            std::cout << "Min: " << minRaw << " //Max: " << maxRaw << std::endl;
+            minT = (double)(minRaw - 1000.0)/10.0;//画素値から摂氏温度に変換
+            maxT = (double)(maxRaw - 1000.0)/10.0;//画素値から摂氏温度に変換
 
             std::cout << "Min Temperature: " << minT << " //Max Temperature: " << maxT << std::endl;
             std::cout << " / size: " << dst.size().width 
              << " x " << dst.size().height << " / channel: " << dst.channels() << " / type: " << dst.type() << std::endl;
-            std::cout << "type : CV_8UC1 = 1 / CV_8UC3 = 16 / CV_16UC1 = 2 / CV_16UC3 = 18" << std::endl;
+            std::cout << "type : CV_8UC1 = 0 / CV_8UC3 = 16 / CV_16UC1 = 2 / CV_16UC3 = 18" << std::endl;
 
             sensor_msgs::ImagePtr mess = cv_bridge::CvImage(std_msgs::Header(), "mono8", dst).toImageMsg();//Mat型からsensor_msgs/ImagePtr型へ変換．モノクロ画像なので，encodingはmono8にしてある．
             image_pub.publish(mess);//msgをpublish
