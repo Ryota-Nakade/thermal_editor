@@ -19,7 +19,7 @@ class ImageType{
         //コンストラクタ
         ImageType()
             : it(nh){
-                image_sub = it.subscribe("/optris/thermal_corrected_throttle", 1, &ImageType::imageType, this);//Subscriberを定義．topic名は/thermal_image
+                image_sub = it.subscribe("/thermal_corrected", 1, &ImageType::imageType, this);//Subscriberを定義．topic名は/thermal_image
                 image_pub = it.advertise("/thermal_type", 1);    //Publisherを定義．
                 //topic名は/image_raw，第2引数はキューサイズ，第3引数はトピックを受信したときに呼び出すCallback関数の指定
             }
