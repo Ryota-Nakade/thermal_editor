@@ -40,6 +40,7 @@ add_executable(thermal_threshold src/thermal_threshold.cpp)
 add_executable(thermal_distortion src/thermal_distortion.cpp)
 add_executable(thermal_compressed src/thermal_compressed.cpp)
 add_executable(thermal_imagetype src/thermal_imagetype.cpp)
+add_executable(thermal_image_EQhistgram src/thermal_image_EQhistgram.cpp)
 
 target_link_libraries(thermal_imager
   ${catkin_LIBRARIES}
@@ -93,6 +94,11 @@ target_link_libraries(thermal_compressed
 )
 
 target_link_libraries(thermal_imagetype
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
+
+target_link_libraries(thermal_image_EQhistgram
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )
