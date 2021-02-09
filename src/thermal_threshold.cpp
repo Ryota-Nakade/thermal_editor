@@ -7,7 +7,8 @@
 #include <sensor_msgs/image_encodings.h>
 
 // 12/3: optrisからの/thermal_imageトピックを受取り，ROSにトピックpublish
-// 16bit-thermal画像を8bitに変換した後，2値化処理
+// 16bit-thermal画像をトラックバーで閾値変更
+// 8bitに変換して表示＆Publish
 
 class ImageThreshold{
     ros::NodeHandle nh;
@@ -23,13 +24,17 @@ class ImageThreshold{
                 image_sub = it.subscribe("/thermal_image", 1, &ImageThreshold::imageTh, this);//Subscriberを定義．topic名は/thermal_image
                 image_pub = it.advertise("/thermal_image_threshold", 1);    //Publisherを定義．
                 //topic名は/image_raw，第2引数はキューサイズ，第3引数はトピックを受信したときに呼び出すCallback関数の指定
-                // cv::namedWindow("threshold", CV_WINDOW_NORMAL);
-                // cv::resizeWindow("threshold", 640, 480);//ウィンドウサイズのリサイズ
+                cv::namedWindow("threshold", CV_WINDOW_NORMAL);
+                cv::resizeWindow("threshold", 640, 480);//ウィンドウサイズのリサイズ
+                int valMin = 900;//閾値低い方の初期値
+                int valMax = 1000;//閾値高い方の初期値
+                cv::createTrackbar("Threshold_min", "threshold", &valMin, 2000);//トラックバー作成
+                cv::createTrackbar("Threshold_max", "threshold", &valMax, 2000);//トラックバー作成
             }
 
         //デストラクタ
         ~ImageThreshold() {
-            // cv::destroyWindow("threshold");
+            cv::destroyWindow("threshold");
         }
 
         void rangeThermalImage(cv::Mat &dst, ushort minTh, ushort maxTh, cv::Mat &dst_mask) {
@@ -60,20 +65,17 @@ class ImageThreshold{
 
             cv::Mat dst = (src->image).clone();
 
-            int val = 40;//閾値
+            ushort thresh_min = cv::getTrackbarPos("Threshold_min", "threshold");//トラックバーから閾値を得る
+            ushort thresh_max = cv::getTrackbarPos("Threshold_max", "threshold");//トラックバーから初期値を得る
 
             cv::Mat dst_mask = cv::Mat::zeros(dst.rows, dst.cols, CV_16UC1);//マスクした16bit出力画像用
-            rangeThermalImage(dst, 950, 965, dst_mask);//指定した範囲内の画素からなる画像"dst_mask"を生成．
+            rangeThermalImage(dst, thresh_min, thresh_max, dst_mask);//指定した範囲内の画素からなる画像"dst_mask"を生成．
             cv::normalize(dst_mask, dst_mask, 0, 255, cv::NORM_MINMAX);//次のステップで8bit画像にするため，0~255に正規化
             dst_mask.convertTo(dst_mask, CV_8UC1);//8bitにconvert
 
-            // cv::threshold(dst_mask, dst_mask, val, 255, CV_THRESH_BINARY);
-            // //cv::threshold(gray, dst,  val, 255, CV_THRESH_BINARY_INV);
-            // cv::equalizeHist(dst_mask, dst_mask);//dst_maskをヒストグラム均一化してdst2_eqに入力
-
             sensor_msgs::ImagePtr mess = cv_bridge::CvImage(std_msgs::Header(), "mono8", dst_mask).toImageMsg();//Mat型からsensor_msgs/ImagePtr型へ変換．モノクロ画像なので，encodingはmono8にしてある．
             image_pub.publish(mess);//msgをpublish
-            // cv::imshow("threshold", dst_mask);
+            cv::imshow("threshold", dst_mask);//OpenCV画面上で表示
 
             cv::waitKey(1);
         }

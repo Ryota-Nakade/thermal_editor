@@ -93,8 +93,8 @@ class ImageConverter{
             cv::Mat dst_mask2 = cv::Mat::zeros(dst.rows, dst.cols, CV_16UC1);//マスクした16bit出力画像用            
             cv::Mat dst_mask3 = cv::Mat::zeros(dst.rows, dst.cols, CV_16UC1);//マスクした16bit出力画像用
             // cv::Mat dst_mask_8 = cv::Mat::zeros(dst.rows, dst.cols, CV_16UC1);//マスクした8bit出力画像用
-            ushort thLow = 960;//表示する下限値
-            ushort range = 100;//温度の範囲．192が最大(8bitで表示可能な最大値)
+            ushort thLow = 1000;//表示する下限値
+            ushort range = 50;//温度の範囲．192が最大(8bitで表示可能な最大値)
             rangeThermalImage(dst, thLow, thLow+range, dst_mask);//指定した範囲内の画素からなる画像"dst_mask"を生成．
             rangeThermalImage(dst, thLow+range, thLow+2*range, dst_mask2);//指定した範囲内の画素からなる画像"dst_mask"を生成．
             rangeThermalImage(dst, thLow+2*range, thLow+3*range, dst_mask3);//指定した範囲内の画素からなる画像"dst_mask"を生成．
